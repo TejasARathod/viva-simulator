@@ -54,7 +54,7 @@ def get_system_instruction(pdf_text):
 def process_audio(audio_bytes):
     """Transcribes audio bytes to text using Gemini 1.5 Flash."""
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-1.5-flash-latest")
         response = model.generate_content([
             "Transcribe the following audio exactly.",
             {"mime_type": "audio/wav", "data": audio_bytes}
@@ -67,7 +67,7 @@ def process_audio(audio_bytes):
 def generate_response(user_input, chat_history, system_instruction):
     """Generates a response from Gemini based on chat history and rules."""
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash", system_instruction=system_instruction)
+        model = genai.GenerativeModel("gemini-1.5-flash-latest", system_instruction=system_instruction)
         
         # Convert chat history to Gemini format
         gemini_history = []
