@@ -6,13 +6,31 @@ from pypdf import PdfReader
 from streamlit_mic_recorder import mic_recorder
 import io
 
-# Load environment variables
-load_dotenv()
+# --- DEBUG: Verify App is Loading ---
+st.set_page_config(page_title="Viva Coach", layout="wide") # This must be the first Streamlit command
+st.title("DEBUG: App is running!") 
 
-# Configure Gemini
-# API_KEY = os.getenv("GOOGLE_API_KEY") # User will need to set this
-# if API_KEY:
-#     genai.configure(api_key=API_KEY)
+# --- API KEY SETUP (The Fix) ---
+load_dotenv() # Load from .env (for your laptop)
+
+# Try to get key from Local Environment OR Streamlit Secrets
+api_key = os.getenv("GOOGLE_API_KEY")
+
+if not api_key:
+    try:
+        # This is where Streamlit Cloud stores the key you added in Settings
+        api_key = st.secrets["GOOGLE_API_KEY"]
+    except FileNotFoundError:
+        pass # Secrets file doesn't exist on local laptop
+
+# Configure Gemini or Stop the App
+if api_key:
+    genai.configure(api_key=api_key)
+    st.success("✅ API Key loaded successfully")
+else:
+    st.error("❌ API Key missing! Add it to .env (local) or Streamlit Secrets (cloud).")
+    st.stop() # Stop the app here so it doesn't crash silently later
+
 
 def get_system_instruction(pdf_text):
     """
